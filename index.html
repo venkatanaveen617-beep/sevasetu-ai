@@ -1,98 +1,418 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SevaSetu AI — Voice Form Assistant</title>
+<title>SevaSetu AI - Voice Assistant</title>
 <style>
-:root{--navy:#102a43;--blue:#1769aa;--teal:#087e8b;--bg:#f3f7fb;--ink:#1c2b39;--muted:#617487;--line:#dce6ef;--white:#fff;--green:#16794b}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink)}
-header{background:linear-gradient(120deg,#102a43,#1769aa);color:white;padding:26px 18px}
-.wrap{max-width:1100px;margin:auto}.brand{font-size:13px;letter-spacing:2px;text-transform:uppercase;opacity:.85}.hero{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}.hero h1{margin:8px 0;font-size:clamp(27px,4vw,40px)}.hero p{margin:0;color:#e4f0fa;max-width:650px;line-height:1.5}.pill{background:#ffffff20;border:1px solid #ffffff55;border-radius:99px;padding:8px 12px;font-size:13px}
-main{max-width:1100px;margin:22px auto;padding:0 16px 40px}.notice{background:#fff8df;border:1px solid #f2d887;padding:12px 14px;border-radius:12px;font-size:13px;line-height:1.5;margin-bottom:18px}
-.grid{display:grid;grid-template-columns: .9fr 1.1fr;gap:18px}.card{background:white;border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 6px 24px #17324d08}.card h2{font-size:19px;margin:0 0 8px}.sub{font-size:13px;color:var(--muted);line-height:1.5;margin:0 0 16px}
-label{display:block;font-weight:650;font-size:13px;margin:12px 0 6px}input,select,textarea{width:100%;padding:11px 12px;border:1px solid #cbd8e4;border-radius:10px;font:inherit;background:#fff;color:var(--ink)}input:focus,select:focus,textarea:focus{outline:2px solid #9ac8ef;border-color:var(--blue)}
-button{border:0;border-radius:11px;padding:11px 14px;font:inherit;font-weight:700;cursor:pointer;transition:.15s}button:hover{filter:brightness(.96)}button:focus-visible{outline:3px solid #f6c453}.primary{background:var(--blue);color:#fff}.teal{background:var(--teal);color:#fff}.light{background:#eaf2f8;color:#16405f}.danger{background:#fff0ed;color:#a33021}.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.mic{width:100%;padding:16px;font-size:16px;border-radius:14px}.status{padding:11px 12px;background:#edf7ff;border-radius:10px;font-size:14px;margin-top:12px;min-height:42px;line-height:1.5}.status.error{background:#fff0ed;color:#9b2c20}.status.good{background:#e8f7ef;color:#14643e}.question{font-size:21px;font-weight:750;line-height:1.35;margin:14px 0}.step{font-size:12px;color:var(--muted)}.progress{height:7px;background:#e6edf3;border-radius:10px;overflow:hidden;margin:8px 0 15px}.bar{height:100%;background:var(--teal);width:0%;transition:width .2s}
-.fields{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}.field.full{grid-column:1/-1}.field small{color:var(--muted);font-size:11px}.empty{padding:20px;border:1px dashed #cbd8e4;border-radius:12px;color:var(--muted);font-size:14px}.foot{font-size:12px;color:var(--muted);line-height:1.5;margin-top:16px}
-@media(max-width:780px){.grid{grid-template-columns:1fr}.fields{grid-template-columns:1fr}.field.full{grid-column:auto}.card{padding:16px}}
+:root {
+  --blue:#1457d9;
+  --light:#eef5ff;
+  --green:#168447;
+  --ink:#17243b;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:linear-gradient(145deg,#e9f3ff,#f8fbff);
+  color:var(--ink);
+}
+header {
+  background:var(--blue);
+  color:white;
+  padding:20px 16px;
+  text-align:center;
+}
+header h1 { margin:0 0 7px; font-size:30px; }
+header p { margin:0; }
+main { max-width:760px; margin:22px auto; padding:0 14px 30px; }
+.card {
+  background:white;
+  border-radius:20px;
+  padding:22px;
+  margin-bottom:17px;
+  box-shadow:0 5px 22px #173e7514;
+}
+h2 { margin-top:0; }
+label { display:block; font-weight:bold; margin:15px 0 7px; }
+input,textarea,select {
+  width:100%;
+  padding:14px;
+  border:2px solid #d7e2f2;
+  border-radius:12px;
+  font:inherit;
+  font-size:16px;
+  background:white;
+}
+textarea { resize:vertical; min-height:75px; }
+button {
+  border:0;
+  border-radius:13px;
+  padding:13px 16px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  min-height:48px;
+}
+button:focus,input:focus,textarea:focus {
+  outline:3px solid #ffca55;
+  outline-offset:2px;
+}
+.primary { background:var(--blue); color:white; }
+.green { background:var(--green); color:white; }
+.light { background:var(--light); color:#1548a3; }
+.danger { background:#ffeded; color:#a22222; }
+.buttons { display:flex; flex-wrap:wrap; gap:9px; margin-top:15px; }
+.buttons button { flex:1 1 125px; }
+.icon-grid {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin:16px 0;
+}
+.icon-button {
+  background:var(--light);
+  color:var(--ink);
+  padding:15px 5px;
+  min-height:105px;
+}
+.icon-button span { display:block; font-size:35px; margin-bottom:7px; }
+.mic {
+  width:100%;
+  padding:19px;
+  font-size:19px;
+  background:#0d7d49;
+  color:white;
+}
+.status {
+  padding:12px;
+  border-radius:10px;
+  background:#f0f5fc;
+  margin-top:12px;
+  line-height:1.5;
+}
+.small { font-size:14px; color:#52637b; line-height:1.6; }
+.hidden { display:none; }
+.progress {
+  height:8px; background:#e2eafa; border-radius:10px; overflow:hidden;
+}
+#progressBar { height:100%; width:0; background:#168447; transition:width .2s; }
+footer { text-align:center; padding:10px 20px 25px; color:#52637b; }
+@media(max-width:430px) {
+  header h1 { font-size:25px; }
+  .card { padding:17px; }
+  .icon-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
 </style>
 </head>
 <body>
-<header><div class="wrap hero"><div><div class="brand">Accessible public services • Prototype</div><h1>SevaSetu AI</h1><p>Your voice-first helper for understanding and filling forms. Speak naturally in Telugu or English; the assistant guides you one question at a time.</p></div><div class="pill">🎙️ Voice-first • Telugu + English</div></div></header>
+<header>
+  <h1>🌉 SevaSetu AI</h1>
+  <p id="tagline">Mee seva, mee maatallo!</p>
+  <p>Your Voice • Your Language • Your Service</p>
+</header>
+
 <main>
-<div class="notice"><b>Demo notice:</b> This is a prototype using a sample form. It does not submit applications or connect to government systems. Browser speech recognition may require internet and may not work in every browser. Please verify details before using any real form.</div>
-<div class="grid">
-<section class="card">
-<h2>🎧 Talk to SevaSetu</h2><p class="sub">Choose a language, start the assistant, and answer each question by speaking or typing.</p>
-<label for="language">Conversation language</label><select id="language"><option value="te-IN">Telugu (తెలుగు)</option><option value="en-IN">English</option></select>
-<label for="formType">Choose a sample form</label><select id="formType"><option value="general">General assistance form</option><option value="college">College student form</option><option value="service">Public service enquiry form</option></select>
-<button class="primary mic" id="startBtn">🎙️ Start voice assistant</button>
-<div class="question" id="question">Namaskaram! Let's fill your form together.</div>
-<div class="step" id="step">Ready when you are</div><div class="progress"><div class="bar" id="bar"></div></div>
-<div class="btnrow"><button class="teal" id="listenBtn">🎤 Speak answer</button><button class="light" id="repeatBtn">🔊 Repeat question</button><button class="light" id="nextBtn">Next →</button></div>
-<label for="typedAnswer">Or type the answer here</label><input id="typedAnswer" placeholder="Your answer…"/>
-<div class="btnrow"><button class="primary" id="saveAnswerBtn">Save answer</button><button class="light" id="backBtn">← Back</button><button class="danger" id="resetBtn">Start over</button></div>
-<div class="status" id="status" role="status" aria-live="polite">Choose a language and press Start.</div>
-<p class="foot">Voice features use your browser. On most desktop browsers, Chrome or Edge works best. Allow microphone access when asked.</p>
-</section>
-<section class="card">
-<h2>📝 Your form</h2><p class="sub">Answers appear here as you go. You can also edit every field manually.</p>
-<div class="fields" id="fields"></div>
-<div class="btnrow"><button class="primary" id="reviewBtn">Review my form</button><button class="light" id="readBtn">🔊 Read form aloud</button><button class="light" id="downloadBtn">Download form (.txt)</button></div>
-<div class="status" id="review" aria-live="polite">Your form is not submitted. Fill the fields and review them before using the information.</div>
-<p class="foot">Privacy reminder: use sample information for this demo. Avoid entering Aadhaar numbers, passwords, bank details, or other sensitive information.</p>
-</section>
-</div>
+  <section class="card">
+    <h2>🌐 Language / భాష</h2>
+    <label for="language">Choose your language</label>
+    <select id="language">
+      <option value="te-IN">తెలుగు (Telugu)</option>
+      <option value="en-IN">English</option>
+    </select>
+    <div class="icon-grid">
+      <button class="icon-button" onclick="speakText(currentPrompt())">
+        <span>🔊</span>Listen
+      </button>
+      <button class="icon-button" onclick="startVoice()">
+        <span>🎙️</span>Speak
+      </button>
+      <button class="icon-button" onclick="repeatQuestion()">
+        <span>🔁</span>Repeat
+      </button>
+    </div>
+    <p class="small">Tap a symbol to use it. You can also type your answers.</p>
+  </section>
+
+  <section class="card">
+    <h2>📝 Service Demo</h2>
+    <p>Select a demo service. This is a practice form, not an official government application.</p>
+    <label for="service">Choose service</label>
+    <select id="service">
+      <option value="income">💰 Income Certificate Guidance Demo</option>
+      <option value="college">🎓 College Application Demo</option>
+      <option value="general">📄 General Form Demo</option>
+    </select>
+    <button class="primary" style="width:100%;margin-top:14px" onclick="beginDemo()">
+      ▶️ Start / ప్రారంభించు
+    </button>
+  </section>
+
+  <section class="card hidden" id="formCard">
+    <h2 id="formTitle">Let's fill the form</h2>
+    <div class="progress"><div id="progressBar"></div></div>
+    <p id="stepText" class="small"></p>
+    <div id="questionArea"></div>
+    <div class="buttons">
+      <button class="light" onclick="previousQuestion()">⬅️ Back</button>
+      <button class="light" onclick="repeatQuestion()">🔊 Repeat</button>
+      <button class="primary" onclick="startVoice()">🎙️ Speak</button>
+      <button class="primary" onclick="nextQuestion()">Next ➡️</button>
+    </div>
+    <div class="status" id="status" role="status" aria-live="polite">
+      Choose Speak or type your answer.
+    </div>
+  </section>
+
+  <section class="card hidden" id="reviewCard">
+    <h2>✅ Please check your answers</h2>
+    <p id="reviewIntro">Listen and confirm your answers before continuing.</p>
+    <div id="reviewArea"></div>
+    <div class="buttons">
+      <button class="light" onclick="backToForm()">✏️ Edit answers</button>
+      <button class="light" onclick="readReview()">🔊 Read aloud</button>
+      <button class="green" onclick="confirmDemo()">✅ Confirm demo</button>
+    </div>
+  </section>
+
+  <section class="card hidden" id="doneCard" role="status">
+    <h2>🎉 Demo completed!</h2>
+    <p>Your answers have been checked in this demo.</p>
+    <p>⚠️ No government application has been submitted.</p>
+    <button class="primary" onclick="resetDemo()">🔄 Start again</button>
+  </section>
+
+  <section class="card">
+    <h2>🛟 Help / సహాయం</h2>
+    <div class="icon-grid">
+      <button class="icon-button" onclick="helpUser()"><span>❓</span>Help</button>
+      <button class="icon-button" onclick="speakText(currentPrompt())"><span>🔊</span>Listen again</button>
+      <button class="icon-button" onclick="resetDemo()"><span>🏠</span>Home</button>
+    </div>
+    <p class="small">Voice input depends on browser support, microphone permission and internet availability. If it does not work, type your answer.</p>
+  </section>
 </main>
+
+<footer>SevaSetu AI • Inclusive Digital Services • Prototype Demo</footer>
+
 <script>
-const formSets={
- general:[
-  {key:"name",label:{en:"Full name",te:"పూర్తి పేరు"},q:{en:"What is your full name?",te:"మీ పూర్తి పేరు ఏమిటి?"},type:"text"},
-  {key:"age",label:{en:"Age",te:"వయస్సు"},q:{en:"How old are you? Please say your age in years.",te:"మీ వయస్సు ఎంత? సంవత్సరాలలో చెప్పండి."},type:"number"},
-  {key:"phone",label:{en:"Contact number (optional)",te:"ఫోన్ నంబర్ (ఐచ్ఛికం)"},q:{en:"Would you like to add a contact number? You can say skip.",te:"ఫోన్ నంబర్ ఇవ్వాలనుకుంటున్నారా? వద్దంటే స్కిప్ అని చెప్పండి."},type:"tel"},
-  {key:"address",label:{en:"Village / town",te:"గ్రామం / పట్టణం"},q:{en:"Which village or town do you live in?",te:"మీరు ఏ గ్రామంలో లేదా పట్టణంలో నివసిస్తున్నారు?"},type:"text"},
-  {key:"purpose",label:{en:"What help do you need?",te:"మీకు ఏ సహాయం కావాలి?"},q:{en:"What form or service do you need help with?",te:"మీకు ఏ ఫారం లేదా సేవ కోసం సహాయం కావాలి?"},type:"text",full:true}
- ],
- college:[
-  {key:"name",label:{en:"Student full name",te:"విద్యార్థి పూర్తి పేరు"},q:{en:"What is the student's full name?",te:"విద్యార్థి పూర్తి పేరు ఏమిటి?"},type:"text"},
-  {key:"course",label:{en:"Course / branch",te:"కోర్సు / బ్రాంచ్"},q:{en:"Which course or branch are you studying?",te:"మీరు ఏ కోర్సు లేదా బ్రాంచ్ చదువుతున్నారు?"},type:"text"},
-  {key:"year",label:{en:"Year / semester",te:"సంవత్సరం / సెమిస్టర్"},q:{en:"Which year or semester are you in?",te:"మీరు ఏ సంవత్సరం లేదా సెమిస్టర్‌లో ఉన్నారు?"},type:"text"},
-  {key:"college",label:{en:"College name",te:"కళాశాల పేరు"},q:{en:"What is your college name?",te:"మీ కళాశాల పేరు ఏమిటి?"},type:"text",full:true},
-  {key:"purpose",label:{en:"Reason for form",te:"ఫారం ఉద్దేశ్యం"},q:{en:"What is this form for?",te:"ఈ ఫారం ఎందుకో చెప్పండి."},type:"text",full:true}
- ],
- service:[
-  {key:"name",label:{en:"Full name",te:"పూర్తి పేరు"},q:{en:"What is your full name?",te:"మీ పూర్తి పేరు ఏమిటి?"},type:"text"},
-  {key:"service",label:{en:"Service / certificate",te:"సేవ / సర్టిఫికేట్"},q:{en:"Which service or certificate do you need help with?",te:"మీకు ఏ సేవ లేదా సర్టిఫికేట్ కావాలి?"},type:"text",full:true},
-  {key:"location",label:{en:"Village / town / district",te:"గ్రామం / పట్టణం / జిల్లా"},q:{en:"Which village, town, or district are you from?",te:"మీ గ్రామం, పట్టణం లేదా జిల్లా ఏది?"},type:"text",full:true},
-  {key:"help",label:{en:"What help do you need?",te:"ఏ సహాయం కావాలి?"},q:{en:"What do you want help understanding or preparing?",te:"ఏ విషయం అర్థం చేసుకోవడానికి లేదా సిద్ధం చేసుకోవడానికి సహాయం కావాలి?"},type:"text",full:true}
- ]
-};
-let fields= formSets.general.map(x=>({...x})), idx=0, started=false;
-const $=id=>document.getElementById(id);
-function lang(){return $("language").value==="te-IN"?"te":"en"}
-function speechLang(){return $("language").value}
-function text(obj){return obj[lang()]}
-function say(s){if(!("speechSynthesis" in window)){setStatus("Text-to-speech is not supported in this browser.",true);return}window.speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(s);u.lang=speechLang();u.rate=.9;window.speechSynthesis.speak(u)}
-function setStatus(s,err=false,good=false){$("status").textContent=s;$("status").className="status"+(err?" error":good?" good":"")}
-function renderFields(){const host=$("fields");host.innerHTML="";fields.forEach((f,i)=>{const d=document.createElement("div");d.className="field"+(f.full?" full":"");const l=document.createElement("label");l.htmlFor="f_"+f.key;l.textContent=text(f.label);const inp=document.createElement("input");inp.id="f_"+f.key;inp.type=f.type;inp.value=f.value||"";inp.placeholder=lang()==="te"?"ఇక్కడ నమోదు చేయండి":"Enter here";inp.addEventListener("input",()=>{f.value=inp.value});d.append(l,inp);host.append(d)})}
-function renderQuestion(){if(!started){$("question").textContent=lang()==="te"?"నమస్కారం! కలిసి ఫారం నింపుదాం.":"Hello! Let's fill your form together."; $("step").textContent=lang()==="te"?"ప్రారంభించడానికి సిద్ధంగా ఉంది":"Ready when you are";$("bar").style.width="0%";return}
- if(idx>=fields.length){$("question").textContent=lang()==="te"?"అన్ని ప్రశ్నలు పూర్తయ్యాయి! వివరాలు పరిశీలించండి.":"All questions completed! Please review your details."; $("step").textContent=`${fields.length} / ${fields.length}`;$("bar").style.width="100%";setStatus(lang()==="te"?"బాగుంది! వివరాలు పరిశీలించి నిర్ధారించండి.":"Great! Review your details and confirm them.",false,true);return}
- $("question").textContent=text(fields[idx].q);$("step").textContent=`${lang()==="te"?"ప్రశ్న":"Question"} ${idx+1} / ${fields.length}`;$("bar").style.width=(idx/fields.length*100)+"%";$("typedAnswer").value=fields[idx].value||""}
-function start(){fields=formSets[$("formType").value].map(x=>({...x,value:""}));idx=0;started=true;renderFields();renderQuestion();setStatus(lang()==="te"?"ప్రశ్నను వినడానికి స్పీకర్ బటన్ నొక్కండి.":"Press Repeat question to hear the question.",false,true);say(lang()==="te"?"నమస్కారం. "+text(fields[0].q):"Hello. "+text(fields[0].q))}
-function saveAnswer(value){if(!started){setStatus("Press Start voice assistant first.",true);return}if(idx>=fields.length){setStatus("All questions are complete. Review your form.",false,true);return}value=(value||"").trim();if(!value){setStatus(lang()==="te"?"దయచేసి మాట్లాడండి లేదా సమాధానం టైప్ చేయండి.":"Please speak or type an answer first.",true);return}
- if(["skip","దాటవేయి","వద్దు","skip it"].includes(value.toLowerCase())) value="";
- fields[idx].value=value;const input=$("f_"+fields[idx].key);if(input)input.value=value;setStatus(lang()==="te"?"సమాధానం ఫారంలో నింపబడింది.":"Answer added to the form.",false,true);idx++;renderQuestion();if(idx<fields.length)say(text(fields[idx].q));else say(lang()==="te"?"అన్ని ప్రశ్నలు పూర్తయ్యాయి. మీ వివరాలను పరిశీలించండి.":"All questions are complete. Please review your details.")}
-function listen(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){setStatus(lang()==="te"?"ఈ బ్రౌజర్‌లో voice recognition అందుబాటులో లేదు. Chrome లేదా Edge ప్రయత్నించండి, లేదా సమాధానం టైప్ చేయండి.":"Speech recognition is not supported here. Try Chrome or Edge, or type your answer.",true);return}
- const rec=new SR();rec.lang=speechLang();rec.interimResults=false;rec.maxAlternatives=1;setStatus(lang()==="te"?"వింటున్నాను… ఇప్పుడు మాట్లాడండి.":"Listening… please speak now.");rec.onresult=e=>{$("typedAnswer").value=e.results[0][0].transcript;setStatus((lang()==="te"?"మీరు చెప్పారు: ":"I heard: ")+e.results[0][0].transcript);};rec.onerror=e=>setStatus("Microphone/recognition issue: "+e.error+". You can type your answer instead.",true);rec.onend=()=>{};rec.start()}
-$("startBtn").onclick=start;$("listenBtn").onclick=listen;$("repeatBtn").onclick=()=>{if(started&&idx<fields.length)say(text(fields[idx].q));else say(lang()==="te"?"ప్రారంభించడానికి Start బటన్ నొక్కండి.":"Press Start to begin.")};
-$("saveAnswerBtn").onclick=()=>saveAnswer($("typedAnswer").value);$("nextBtn").onclick=()=>saveAnswer($("typedAnswer").value);
-$("backBtn").onclick=()=>{if(!started||idx===0)return;idx--;renderQuestion();say(text(fields[idx].q));setStatus(lang()==="te"?"మునుపటి ప్రశ్నకు తిరిగి వచ్చారు.":"Returned to the previous question.")};
-$("resetBtn").onclick=()=>{started=false;idx=0;fields=formSets[$("formType").value].map(x=>({...x,value:""}));renderFields();renderQuestion();$("review").textContent="Your form is not submitted. Fill the fields and review them before using the information.";setStatus(lang()==="te"?"రిసెట్ అయింది. మళ్లీ ప్రారంభించండి.":"Reset complete. Start again.");window.speechSynthesis?.cancel()};
-$("language").onchange=()=>{renderFields();renderQuestion();setStatus(lang()==="te"?"భాష తెలుగు కి మార్చబడింది.":"Language changed to English.");};
-$("formType").onchange=()=>{started=false;idx=0;fields=formSets[$("formType").value].map(x=>({...x,value:""}));renderFields();renderQuestion();setStatus("Form type changed. Press Start to begin.")};
-$("reviewBtn").onclick=()=>{const missing=fields.filter(f=>!((document.getElementById("f_"+f.key)||{}).value||"").trim());fields.forEach(f=>{const el=document.getElementById("f_"+f.key);if(el)f.value=el.value});$("review").textContent=missing.length?((lang()==="te"?"ఇంకా ఖాళీగా ఉన్నవి: ":"Still empty: ")+missing.map(f=>text(f.label)).join(", ")): (lang()==="te"?"అన్ని నమూనా ఫీల్డ్‌లు నింపబడ్డాయి. వివరాలు సరిచూసి మాత్రమే ఉపయోగించండి. ఇది సమర్పించబడలేదు.":"All sample fields are filled. Check the details carefully before use. Nothing has been submitted.");say($("review").textContent)};
-$("readBtn").onclick=()=>{fields.forEach(f=>{const el=document.getElementById("f_"+f.key);if(el)f.value=el.value});const s=fields.map(f=>text(f.label)+": "+(f.value|| (lang()==="te"?"ఖాళీ":"empty"))).join(". ");say(s)};
-$("downloadBtn").onclick=()=>{fields.forEach(f=>{const el=document.getElementById("f_"+f.key);if(el)f.value=el.value});const content="SevaSetu AI — Sample Form\nNot submitted. Verify details before use.\n\n"+fields.map(f=>text(f.label)+": "+(f.value||"")).join("\n");const blob=new Blob([content],{type:"text/plain;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="sevasetu-form.txt";a.click();URL.revokeObjectURL(a.href)};
-renderFields();renderQuestion();
+const fields = [
+  {key:"name",icon:"🧑",label:{te:"మీ పూర్తి పేరు ఏమిటి?",en:"What is your full name?"},placeholder:{te:"మీ పేరు టైప్ చేయండి",en:"Type your full name"}},
+  {key:"address",icon:"🏠",label:{te:"మీ చిరునామా ఏమిటి?",en:"What is your address?"},placeholder:{te:"మీ చిరునామా టైప్ చేయండి",en:"Type your address"}},
+  {key:"age",icon:"🎂",label:{te:"మీ వయస్సు ఎంత?",en:"How old are you?"},placeholder:{te:"వయస్సు టైప్ చేయండి",en:"Type your age"}},
+  {key:"income",icon:"💰",label:{te:"మీ కుటుంబ వార్షిక ఆదాయం ఎంత?",en:"What is your annual family income?"},placeholder:{te:"ఆదాయం టైప్ చేయండి",en:"Type annual income"}}
+];
+
+let answers = {};
+let index = 0;
+let recognition = null;
+let listening = false;
+
+const $ = id => document.getElementById(id);
+const lang = () => $("language").value;
+const telugu = () => lang() === "te-IN";
+
+function currentPrompt() {
+  if (index >= fields.length) return telugu()
+    ? "దయచేసి మీ సమాధానాలను పరిశీలించండి."
+    : "Please review your answers.";
+  return fields[index].label[telugu() ? "te" : "en"];
+}
+
+function speakText(text) {
+  if (!("speechSynthesis" in window)) {
+    setStatus("Voice playback is not supported in this browser.");
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = lang();
+  utterance.rate = 0.9;
+  window.speechSynthesis.speak(utterance);
+}
+
+function setStatus(message) {
+  if ($("status")) $("status").textContent = message;
+}
+
+function beginDemo() {
+  answers = {};
+  index = 0;
+  $("doneCard").classList.add("hidden");
+  $("reviewCard").classList.add("hidden");
+  $("formCard").classList.remove("hidden");
+  $("formTitle").textContent =
+    $("service").selectedOptions[0].textContent;
+  renderQuestion();
+  $("formCard").scrollIntoView({behavior:"smooth",block:"start"});
+  speakText(currentPrompt());
+}
+
+function renderQuestion() {
+  const field = fields[index];
+  const languageKey = telugu() ? "te" : "en";
+  $("stepText").textContent = (index+1) + " / " + fields.length;
+  $("progressBar").style.width = ((index+1)/fields.length*100) + "%";
+  $("questionArea").innerHTML = `
+    <div style="text-align:center;font-size:64px;margin:15px">${field.icon}</div>
+    <label for="answerInput">${field.label[languageKey]}</label>
+    <textarea id="answerInput" autocomplete="on"
+      placeholder="${field.placeholder[languageKey]}"
+      aria-label="${field.label[languageKey]}"></textarea>`;
+  $("answerInput").value = answers[field.key] || "";
+  $("answerInput").addEventListener("input", e => {
+    answers[field.key] = e.target.value;
+  });
+  setStatus(telugu()
+    ? "మాట్లాడండి లేదా టైప్ చేయండి."
+    : "Speak or type your answer.");
+}
+
+function saveCurrent() {
+  const field = fields[index];
+  const input = $("answerInput");
+  if (input) answers[field.key] = input.value.trim();
+}
+
+function nextQuestion() {
+  saveCurrent();
+  if (!answers[fields[index].key]) {
+    setStatus(telugu()
+      ? "దయచేసి సమాధానం చెప్పండి లేదా టైప్ చేయండి."
+      : "Please speak or type an answer first.");
+    return;
+  }
+  if (index < fields.length - 1) {
+    index++;
+    renderQuestion();
+    speakText(currentPrompt());
+  } else {
+    showReview();
+  }
+}
+
+function previousQuestion() {
+  saveCurrent();
+  if (index > 0) {
+    index--;
+    renderQuestion();
+    speakText(currentPrompt());
+  } else {
+    setStatus(telugu() ? "ఇది మొదటి ప్రశ్న." : "This is the first question.");
+  }
+}
+
+function repeatQuestion() {
+  speakText(currentPrompt());
+}
+
+function startVoice() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    setStatus("Voice recognition is not supported here. Try Chrome, allow microphone access, or type your answer.");
+    return;
+  }
+  if (listening && recognition) {
+    recognition.stop();
+    return;
+  }
+  recognition = new SpeechRecognition();
+  recognition.lang = lang();
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+  recognition.onstart = () => {
+    listening = true;
+    setStatus(telugu() ? "🎙️ వింటున్నాను... ఇప్పుడు మాట్లాడండి." : "🎙️ Listening... please speak now.");
+  };
+  recognition.onresult = event => {
+    const transcript = event.results[0][0].transcript;
+    const input = $("answerInput");
+    if (input) {
+      input.value = transcript;
+      answers[fields[index].key] = transcript.trim();
+    }
+    setStatus((telugu() ? "మీ సమాధానం: " : "Your answer: ") + transcript);
+  };
+  recognition.onerror = event => {
+    setStatus("Voice input issue: " + event.error + ". You can type your answer instead.");
+  };
+  recognition.onend = () => { listening = false; };
+  try {
+    recognition.start();
+  } catch (error) {
+    setStatus("Could not start microphone. Please try again or type your answer.");
+  }
+}
+
+function showReview() {
+  $("formCard").classList.add("hidden");
+  $("reviewCard").classList.remove("hidden");
+  $("reviewArea").innerHTML = fields.map(field => `
+    <div style="padding:12px 0;border-bottom:1px solid #e2eafa">
+      <div style="font-size:23px">${field.icon} <strong>${field.label[telugu() ? "te" : "en"]}</strong></div>
+      <p style="white-space:pre-wrap;overflow-wrap:anywhere">${escapeHtml(answers[field.key] || "")}</p>
+    </div>`).join("");
+  $("reviewCard").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[c]);
+}
+
+function readReview() {
+  const text = fields.map(f => f.label[telugu() ? "te" : "en"] + " " + (answers[f.key] || "")).join(". ");
+  speakText(text);
+}
+
+function backToForm() {
+  $("reviewCard").classList.add("hidden");
+  $("formCard").classList.remove("hidden");
+  index = fields.length - 1;
+  renderQuestion();
+  $("answerInput").value = answers[fields[index].key] || "";
+}
+
+function confirmDemo() {
+  $("reviewCard").classList.add("hidden");
+  $("doneCard").classList.remove("hidden");
+  $("doneCard").scrollIntoView({behavior:"smooth",block:"start"});
+  speakText(telugu()
+    ? "ధన్యవాదాలు. మీ డెమో పూర్తయింది. ఏ ప్రభుత్వ దరఖాస్తూ పంపబడలేదు."
+    : "Thank you. Your demo is complete. No government application was submitted.");
+}
+
+function helpUser() {
+  speakText(telugu()
+    ? "భాష ఎంచుకోండి. ప్రారంభించండి నొక్కండి. మైక్రోఫోన్ నొక్కి మాట్లాడండి లేదా సమాధానం టైప్ చేయండి. చివరలో మీ సమాధానాలు పరిశీలించి నిర్ధారించండి."
+    : "Choose a language, start the demo, then tap the microphone and speak or type an answer. Review your answers before confirming.");
+}
+
+function resetDemo() {
+  if (listening && recognition) recognition.stop();
+  window.speechSynthesis?.cancel();
+  answers = {};
+  index = 0;
+  listening = false;
+  $("formCard").classList.add("hidden");
+  $("reviewCard").classList.add("hidden");
+  $("doneCard").classList.add("hidden");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+$("language").addEventListener("change", () => {
+  if (!$("formCard").classList.contains("hidden")) renderQuestion();
+});
+
+$("language").addEventListener("change", () => {
+  $("tagline").textContent = telugu()
+    ? "మీ సేవ, మీ మాటల్లో!"
+    : "Your service, in your words!";
+});
+
 </script>
-</body></html>
+</body>
+</html>
