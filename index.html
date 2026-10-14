@@ -3,8 +3,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SevaSetu AI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SevaSetu AI - Voice Assistant</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:#eef5ff;color:#17243b}
@@ -42,29 +42,29 @@ button{padding:13px;border:0;border-radius:12px;font-size:16px;font-weight:bold;
 
 <main>
 <section class="card">
-<h2>🌐 Choose Language / భాష / भाषा</h2>
-<select id="language">
+<h2>🌐 Language / భాష / भाषा</h2>
+<select id="language" aria-label="Choose language">
 <option value="te-IN">తెలుగు — Telugu</option>
 <option value="en-IN">English</option>
 <option value="hi-IN">हिन्दी — Hindi</option>
 </select>
 <div class="grid">
-<button class="symbol" onclick="speak(currentQuestion())"><span>🔊</span>Listen</button>
+<button class="symbol" onclick="repeatQuestion()"><span>🔊</span>Repeat</button>
 <button class="symbol" onclick="listen()"><span>🎙️</span>Speak</button>
-<button class="symbol" onclick="speak(currentQuestion())"><span>🔁</span>Repeat</button>
+<button class="symbol" onclick="pauseAssistant()"><span>⏸️</span>Pause</button>
 </div>
-<p class="small">Voice recognition depends on browser support and internet. You can always type your answer.</p>
+<p class="small">First press Start and allow microphone permission. The assistant will then try to listen automatically after each question.</p>
 </section>
 
 <section class="card" id="startCard">
-<h2>📋 Select a demo</h2>
+<h2>📋 Choose a demo</h2>
 <select id="service">
 <option>💰 Income Certificate Guidance Demo</option>
 <option>🎓 College Application Demo</option>
 <option>📄 General Form Demo</option>
 </select>
 <button class="primary full" onclick="start()">▶️ Start / ప్రారంభించు / शुरू करें</button>
-<p class="small">Practice prototype only. This does not submit an official application.</p>
+<p class="small">Practice prototype only. No official application will be submitted.</p>
 </section>
 
 <section class="card hidden" id="formCard">
@@ -74,18 +74,18 @@ button{padding:13px;border:0;border-radius:12px;font-size:16px;font-weight:bold;
 <div id="question"></div>
 <div class="actions">
 <button class="light" onclick="back()">⬅️ Back</button>
-<button class="light" onclick="speak(currentQuestion())">🔊 Repeat</button>
-<button class="primary" onclick="listen()">🎙️ Speak</button>
+<button class="light" onclick="repeatQuestion()">🔊 Repeat</button>
+<button class="primary" onclick="listen()">🎙️ Listen now</button>
 <button class="primary" onclick="next()">Next ➡️</button>
 </div>
 <div class="status" id="status" role="status" aria-live="polite"></div>
 </section>
 
 <section class="card hidden" id="reviewCard">
-<h2>✅ Review / సమీక్ష / जाँचें</h2>
+<h2>✅ Review your answers</h2>
 <div id="review"></div>
 <div class="actions">
-<button class="light" onclick="edit()">✏️ Edit</button>
+<button class="light" onclick="editAnswers()">✏️ Edit</button>
 <button class="light" onclick="readReview()">🔊 Read aloud</button>
 <button class="green" onclick="confirmDemo()">✅ Confirm</button>
 </div>
@@ -94,13 +94,14 @@ button{padding:13px;border:0;border-radius:12px;font-size:16px;font-weight:bold;
 <section class="card hidden" id="doneCard">
 <h2>🎉 Demo completed!</h2>
 <p id="doneText"></p>
-<p class="small">No government application has been submitted. Answers are kept in this page's memory only and are not sent to a government service.</p>
-<button class="primary full" onclick="reset()">🔄 Start again</button>
+<p class="small">This prototype does not submit an official application. Answers are kept in page memory, not a permanent database.</p>
+<button class="primary full" onclick="resetDemo()">🔄 Start again</button>
 </section>
 
 <section class="card">
 <h2>🛟 Help / సహాయం / मदद</h2>
-<button class="light full" onclick="help()">❓ Explain how to use</button>
+<button class="light full" onclick="help()">❓ Help</button>
+<p class="small">Voice recognition requires browser support, microphone permission and sometimes internet access. You can type answers if voice recognition fails.</p>
 </section>
 </main>
 
@@ -111,162 +112,215 @@ const fields=[
  {key:"name",icon:"🧑",te:"మీ పూర్తి పేరు ఏమిటి?",en:"What is your full name?",hi:"आपका पूरा नाम क्या है?",pte:"మీ పేరు టైప్ చేయండి",pen:"Type your full name",phi:"अपना पूरा नाम लिखें"},
  {key:"address",icon:"🏠",te:"మీ చిరునామా ఏమిటి?",en:"What is your address?",hi:"आपका पता क्या है?",pte:"మీ చిరునామా టైప్ చేయండి",pen:"Type your address",phi:"अपना पता लिखें"},
  {key:"age",icon:"🎂",te:"మీ వయస్సు ఎంత?",en:"How old are you?",hi:"आपकी उम्र कितनी है?",pte:"మీ వయస్సు టైప్ చేయండి",pen:"Type your age",phi:"अपनी उम्र लिखें"},
- {key:"income",icon:"💰",te:"మీ కుటుంబ వార్షిక ఆదాయం ఎంత?",en:"What is your annual family income?",hi:"आपकी परिवार की वार्षिक आय कितनी है?",pte:"వార్షిక ఆదాయం టైప్ చేయండి",pen:"Type annual family income",phi:"परिवार की वार्षिक आय लिखें"}
+ {key:"income",icon:"💰",te:"మీ కుటుంబ వార్షిక ఆదాయం ఎంత?",en:"What is your annual family income?",hi:"आपके परिवार की वार्षिक आय कितनी है?",pte:"వార్షిక ఆదాయం టైప్ చేయండి",pen:"Type annual family income",phi:"परिवार की वार्षिक आय लिखें"}
 ];
 
-let answers={},idx=0,rec=null,listening=false,timer=null,session=0;
+let answers={},idx=0,recognition=null,listening=false;
+let timer=null,session=0,paused=false,voiceMode=true;
 const $=id=>document.getElementById(id);
 const lang=()=>$("language").value;
 const L=()=>lang()==="te-IN"?"te":lang()==="hi-IN"?"hi":"en";
 
 function currentQuestion(){
- const f=fields[idx];
- return f?f[L()]:"Please review your answers.";
+ return fields[idx] ? fields[idx][L()] :
+   (L()==="te"?"మీ సమాధానాలను పరిశీలించండి.":L()==="hi"?"कृपया अपने जवाब जाँचें।":"Please review your answers.");
 }
-function speak(text,done){
+function statusMsg(text){$("status").textContent=text}
+
+function stopRecognition(){
+ if(recognition){
+   try{recognition.onresult=null;recognition.onerror=null;recognition.onend=null;recognition.abort()}catch(e){}
+ }
+ recognition=null;listening=false;
+}
+function cancelPending(){
+ clearTimeout(timer);timer=null;
+}
+function speak(text,after){
  if(!("speechSynthesis" in window)){
-   statusMsg("Speech playback is not supported. Please continue manually.");
-   if(done)done();
+   statusMsg("Speech playback unavailable. You can continue using the text box.");
+   if(after)setTimeout(after,500);
    return;
  }
  window.speechSynthesis.cancel();
  const u=new SpeechSynthesisUtterance(text);
  u.lang=lang();u.rate=.88;
- if(done)u.onend=done;
+ u.onend=()=>{if(after&&!paused)after()};
+ u.onerror=()=>{if(after&&!paused)after()};
  window.speechSynthesis.speak(u);
 }
-function statusMsg(t){$("status").textContent=t}
+function askCurrentQuestion(){
+ const mySession=session,myIndex=idx;
+ speak(currentQuestion(),()=>{
+   if(mySession!==session||myIndex!==idx||paused||!voiceMode)return;
+   timer=setTimeout(()=>autoListen(mySession,myIndex),500);
+ });
+}
 function start(){
- reset(false);
+ session++;cancelPending();stopRecognition();paused=false;voiceMode=true;
+ if("speechSynthesis" in window)window.speechSynthesis.cancel();
+ answers={};idx=0;
  $("startCard").classList.add("hidden");
+ $("reviewCard").classList.add("hidden");
+ $("doneCard").classList.add("hidden");
  $("formCard").classList.remove("hidden");
  $("formTitle").textContent=$("service").selectedOptions[0].textContent;
- render();
+ render(false);
  $("formCard").scrollIntoView({behavior:"smooth"});
- speak(currentQuestion());
+ // User click on Start enables the initial speech/microphone flow.
+ askCurrentQuestion();
 }
-function render(){
+function render(autoAsk=true){
  const f=fields[idx],l=L();
  $("step").textContent=(idx+1)+" / "+fields.length;
  $("bar").style.width=((idx+1)/fields.length*100)+"%";
- const prompt=f[l],placeholder=f["p"+l];
  $("question").innerHTML=
  `<div style="text-align:center;font-size:66px;margin:15px">${f.icon}</div>
- <label for="answer">${prompt}</label>
- <textarea id="answer" placeholder="${placeholder}" aria-label="${prompt}"></textarea>`;
+ <label for="answer">${f[l]}</label>
+ <textarea id="answer" placeholder="${f["p"+l]}" aria-label="${f[l]}"></textarea>`;
  $("answer").value=answers[f.key]||"";
  $("answer").addEventListener("input",e=>answers[f.key]=e.target.value);
- statusMsg(l==="te"?"మాట్లాడండి లేదా టైప్ చేయండి.":l==="hi"?"बोलें या अपना जवाब लिखें।":"Speak or type your answer.");
+ statusMsg(l==="te"?"మాట్లాడండి లేదా టైప్ చేయండి.":l==="hi"?"बोलें या जवाब लिखें।":"Speak or type your answer.");
+ if(autoAsk)askCurrentQuestion();
 }
-function save(){
+function saveCurrent(){
  const el=$("answer");
  if(el)answers[fields[idx].key]=el.value.trim();
 }
-function stopListening(){
- if(rec){try{rec.abort()}catch(e){}}
- listening=false;
+function autoListen(mySession,myIndex){
+ if(mySession!==session||myIndex!==idx||paused)return;
+ listen();
 }
 function listen(){
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!SR){statusMsg("Speech recognition unavailable. Please type your answer or try Chrome with microphone permission.");return}
- if($("formCard").classList.contains("hidden")){statusMsg("Please start the demo first.");return}
- stopListening();clearTimeout(timer);
- const thisIdx=idx,thisSession=session;
- rec=new SR();
- rec.lang=lang();
- rec.interimResults=false;
- rec.maxAlternatives=3;
- rec.onstart=()=>{
+ if(!SR){
+   voiceMode=false;
+   statusMsg("Automatic voice recognition is not supported in this browser. Please type your answer or try Chrome.");
+   return;
+ }
+ if($("formCard").classList.contains("hidden"))return;
+ cancelPending();stopRecognition();
+ const mySession=session,myIndex=idx;
+ const r=new SR();
+ recognition=r;
+ r.lang=lang();
+ r.interimResults=false;
+ r.maxAlternatives=3;
+ r.onstart=()=>{
    listening=true;
    statusMsg(L()==="te"?"🎙️ వింటున్నాను... మాట్లాడండి.":L()==="hi"?"🎙️ सुन रहा हूँ... बोलिए।":"🎙️ Listening... please speak.");
  };
- rec.onresult=e=>{
-   if(thisSession!==session||thisIdx!==idx)return;
-   const results=e.results[0];
-   const transcript=(results[0].transcript||"").trim();
+ r.onresult=e=>{
+   if(mySession!==session||myIndex!==idx)return;
+   const transcript=(e.results[0][0].transcript||"").trim();
    if(!transcript)return;
-   $("answer").value=transcript;
    answers[fields[idx].key]=transcript;
+   const el=$("answer");
+   if(el)el.value=transcript;
    listening=false;
-   statusMsg((L()==="te"?"💾 సమాధానం సేవ్ అయింది: ":L()==="hi"?"💾 जवाब सेव हुआ: ":"💾 Answer saved: ")+transcript);
-   // Auto-save and move to next question after speech recognition ends.
+   statusMsg((L()==="te"?"💾 సేవ్ అయింది: ":L()==="hi"?"💾 जवाब सेव हुआ: ":"💾 Saved: ")+transcript);
+   recognition=null;
+   // Let the person finish, then ask the next question automatically.
    timer=setTimeout(()=>{
-     if(thisSession!==session||thisIdx!==idx)return;
+     if(mySession!==session||myIndex!==idx||paused)return;
      if(idx<fields.length-1){
-       idx++;render();speak(currentQuestion());
+       idx++;
+       render(true);
      }else{
-       showReview();readReview();
+       showReview();
+       readReview();
      }
-   },1000);
+   },900);
  };
- rec.onerror=e=>{
+ r.onerror=e=>{
    listening=false;
-   statusMsg("Voice input error: "+e.error+". Try again or type your answer.");
+   if(mySession!==session)return;
+   statusMsg("Voice recognition: "+e.error+". Please try again or type your answer.");
  };
- rec.onend=()=>{listening=false};
- try{rec.start()}catch(e){statusMsg("Could not start microphone. Please try again or type.");}
+ r.onend=()=>{listening=false};
+ try{r.start()}catch(e){
+   listening=false;
+   statusMsg("Could not start microphone. Press Listen now or type your answer.");
+ }
 }
 function next(){
- save();
+ saveCurrent();
  if(!answers[fields[idx].key]){
-  statusMsg(L()==="te"?"దయచేసి సమాధానం చెప్పండి లేదా టైప్ చేయండి.":L()==="hi"?"कृपया जवाब बोलें या लिखें।":"Please speak or type your answer.");
-  return;
+   statusMsg(L()==="te"?"దయచేసి సమాధానం చెప్పండి లేదా టైప్ చేయండి.":L()==="hi"?"कृपया जवाब बोलें या लिखें।":"Please speak or type your answer.");
+   return;
  }
- stopListening();clearTimeout(timer);
- if(idx<fields.length-1){idx++;render();speak(currentQuestion())}
+ session++;cancelPending();stopRecognition();
+ if(idx<fields.length-1){idx++;render(true)}
  else showReview();
 }
 function back(){
- save();stopListening();clearTimeout(timer);
- if(idx>0){idx--;render();speak(currentQuestion())}
+ saveCurrent();
+ session++;cancelPending();stopRecognition();
+ if(idx>0){idx--;render(true)}
+}
+function repeatQuestion(){
+ if($("formCard").classList.contains("hidden"))speak(currentQuestion());
+ else askCurrentQuestion();
+}
+function pauseAssistant(){
+ paused=true;voiceMode=false;cancelPending();stopRecognition();
+ if("speechSynthesis" in window)window.speechSynthesis.cancel();
+ statusMsg(L()==="te"?"వాయిస్ పాజ్ అయింది. కొనసాగించడానికి Speak నొక్కండి.":L()==="hi"?"आवाज़ रुक गई। जारी रखने के लिए Speak दबाएँ।":"Voice paused. Press Speak to continue.");
 }
 function esc(s){
  return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
 function showReview(){
- stopListening();clearTimeout(timer);
- const missing=fields.some(f=>!String(answers[f.key]||"").trim());
- if(missing){statusMsg("Please complete every answer before reviewing.");return}
+ session++;cancelPending();stopRecognition();
+ if(fields.some(f=>!String(answers[f.key]||"").trim())){
+   $("formCard").classList.remove("hidden");
+   statusMsg("Please complete all answers first.");
+   return;
+ }
  $("formCard").classList.add("hidden");
  $("reviewCard").classList.remove("hidden");
- $("review").innerHTML=fields.map(f=>`<div style="padding:12px 0;border-bottom:1px solid #ddd">
+ $("review").innerHTML=fields.map(f=>
+ `<div style="padding:12px 0;border-bottom:1px solid #ddd">
  <strong style="font-size:20px">${f.icon} ${f[L()]}</strong>
- <p style="white-space:pre-wrap;overflow-wrap:anywhere">${esc(answers[f.key])}</p></div>`).join("");
+ <p style="white-space:pre-wrap;overflow-wrap:anywhere">${esc(answers[f.key])}</p>
+ </div>`).join("");
  $("reviewCard").scrollIntoView({behavior:"smooth"});
 }
 function readReview(){
- const txt=fields.map(f=>f[L()]+" "+answers[f.key]).join(". ");
- speak(txt);
+ const text=fields.map(f=>f[L()]+" "+answers[f.key]).join(". ");
+ speak(text);
 }
-function edit(){
+function editAnswers(){
+ session++;cancelPending();stopRecognition();
  $("reviewCard").classList.add("hidden");
  $("formCard").classList.remove("hidden");
- idx=0;render();
- $("formCard").scrollIntoView({behavior:"smooth"});
+ idx=0;render(true);
 }
 function confirmDemo(){
  $("reviewCard").classList.add("hidden");
  $("doneCard").classList.remove("hidden");
- $("doneText").textContent=L()==="te"?"మీ డెమో పూర్తయింది. ధన్యవాదాలు!":L()==="hi"?"आपका डेमो पूरा हुआ। धन्यवाद!":"Your demo is complete. Thank you!";
+ $("doneText").textContent=L()==="te"?"మీ డెమో పూర్తయింది. ఏ ప్రభుత్వ దరఖాస్తూ పంపబడలేదు.":L()==="hi"?"आपका डेमो पूरा हुआ। कोई सरकारी आवेदन जमा नहीं हुआ।":"Demo completed. No government application was submitted.";
  speak($("doneText").textContent);
 }
 function help(){
- const t=L()==="te"?"భాష ఎంచుకోండి. Start నొక్కండి. మైక్రోఫోన్ నొక్కి సమాధానం చెప్పండి. మీ సమాధానం సేవ్ అయి తదుపరి ప్రశ్న వస్తుంది. చివరలో వివరాలు పరిశీలించి Confirm నొక్కండి.":L()==="hi"?"भाषा चुनें। Start दबाएँ। माइक्रोफ़ोन दबाकर जवाब बोलें। जवाब सेव होकर अगला सवाल आएगा। अंत में विवरण जाँचकर Confirm दबाएँ।":"Choose a language and press Start. Tap the microphone and answer. Your answer is saved and the next question follows. Review everything before confirming.";
- speak(t);
+ const text=L()==="te"?"భాష ఎంచుకుని Start నొక్కండి. ప్రశ్న పూర్తయ్యాక మైక్రోఫోన్ ఆటోమేటిక్‌గా ప్రారంభమవడానికి ప్రయత్నిస్తుంది. సమాధానం సేవ్ అయిన తర్వాత తదుపరి ప్రశ్న వస్తుంది.":L()==="hi"?"भाषा चुनकर Start दबाएँ। सवाल के बाद माइक्रोफ़ोन अपने आप शुरू होने की कोशिश करेगा। जवाब सेव होने पर अगला सवाल आएगा।":"Choose a language and press Start. After each question, the microphone will try to start automatically. The next question follows after saving your answer.";
+ speak(text);
 }
-function reset(showStart=true){
- session++;stopListening();clearTimeout(timer);
+function resetDemo(){
+ session++;cancelPending();stopRecognition();paused=false;voiceMode=true;
  if("speechSynthesis" in window)window.speechSynthesis.cancel();
  answers={};idx=0;
  $("formCard").classList.add("hidden");
  $("reviewCard").classList.add("hidden");
  $("doneCard").classList.add("hidden");
- if(showStart)$("startCard").classList.remove("hidden");
+ $("startCard").classList.remove("hidden");
+ window.scrollTo({top:0,behavior:"smooth"});
 }
 $("language").addEventListener("change",()=>{
- $("tagline").textContent=L()==="te"?"మీ సేవ, మీ మాటల్లో!":L()==="hi"?"आपकी सेवा, आपकी भाषा में!":"Your service, in your words!";
+ const l=L();
+ $("tagline").textContent=l==="te"?"మీ సేవ, మీ మాటల్లో!":l==="hi"?"आपकी सेवा, आपकी भाषा में!":"Your service, in your words!";
  if(!$("formCard").classList.contains("hidden")){
-   save();render();speak(currentQuestion());
+   saveCurrent();session++;cancelPending();stopRecognition();render(true);
  }
 });
 </script>
